@@ -2,6 +2,7 @@
 #obj2 - get input from user and add that to the name_data
 
 #to store "name:nick_name" pair in a dictionary
+import csv
 names_list = []
 
 #give user options : read, write or Exit
@@ -26,12 +27,12 @@ def main():
 def read_list():
     with open("name_data.csv") as names:
             names_list = []
-            for line in names:
-                names = {}
-                name, nick_name = line.strip().split(",")
-                names["name"] = name
-                names["nick_name"] = nick_name
-                names_list.append(names)        #this appends to already existing list each time it runs, without deleting last data - SOLVED
+            reader = csv.reader(names)      #using reader func of csv to split values replacing old split method
+            for name, nick_name in reader:
+                name_row = {"name" : name, "nick_name" : nick_name}
+                #names["name"] = name --> shortning the process of defining and then assigning value in names dictionary to line 32
+                #names["nick_name"] = nick_name
+                names_list.append(name_row)        #this appends to already existing list each time it runs, without deleting last data - SOLVED by assigning a blank list before the for loop (line 28)
 
     name_selected = str(input("Please enter the name to check for(Case Sensitive) -- "))
     trial = 0
@@ -42,7 +43,7 @@ def read_list():
             break
         elif trial <= len(names_list):
             continue
-        else:       #this prints below msg each time until it finds the match - SOLVED
+        else:       #this prints below msg each time until it finds the match - SOLVED by continuing the checking loop until trail numbers exceeds the length of the list (line 44)
             print("Name doesn't exist in the directory")
             break
              
@@ -51,7 +52,6 @@ def read_list():
 #get user input for 2 data, and then apppend it to the name_data
 def write_list():
   while True:
-    #new_name = {}
     print("You're about to enter a new name")
     name = str(input("Enter the name -->"))
     nick_name = str(input("Enter the nick name -->"))
