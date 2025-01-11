@@ -18,8 +18,7 @@ def main():
         
             case 3:
                 print("Exiting...")
-                break
-                
+                break                
 
 
 #read
@@ -27,24 +26,21 @@ def main():
 def read_list():
     with open("name_data.csv") as names:
             names_list = []
-            reader = csv.reader(names)      #using reader func of csv to split values replacing old split method
-            for name, nick_name in reader:
-                name_row = {"name" : name, "nick_name" : nick_name}
-                #names["name"] = name --> shortning the process of defining and then assigning value in names dictionary to line 32
-                #names["nick_name"] = nick_name
-                names_list.append(name_row)        #this appends to already existing list each time it runs, without deleting last data - SOLVED by assigning a blank list before the for loop (line 28)
-
-    name_selected = str(input("Please enter the name to check for(Case Sensitive) -- "))
+            reader = csv.DictReader(names)      #DictReader saves values in dictionary. It uses first row value as header title and assignes that as key for subsequent values from that same column
+            for line in reader:
+                names_list.append(line)        #this appends to already existing list each time it runs, without deleting last data - SOLVED by assigning a blank list before the for loop (line 28)
+    print(names_list)
+    name_selected = str(input("Please enter the name to search (Case Sensitive) --> "))
     trial = 0
     for name_line in names_list:
         trial +=1
         if name_selected == name_line["name"] :     
             print(f"Nick name of {name_selected} is {name_line["nick_name"]}")
             break
-        elif trial <= len(names_list):
+        elif trial <= len(names_list):      #is this working? --> YES
             continue
-        else:       #this prints below msg each time until it finds the match - SOLVED by continuing the checking loop until trail numbers exceeds the length of the list (line 44)
-            print("Name doesn't exist in the directory")
+        else:       
+            print("Not in")    #this msg is not getting printed
             break
              
 
@@ -57,9 +53,11 @@ def write_list():
     nick_name = str(input("Enter the nick name -->"))
     YN = int(input(f"You entered {name} and {nick_name}\nIs this correct? 1.Yes  2.No -->"))
     if YN == 1 :
-        with open("name_data.csv", "a") as file:
-            file.write(f"{name},{nick_name}")
-            print("Name entered succefully, going back to Main Menu")
+        with open("name_data.csv", "a", newline="") as file:        #so there are not two new lines added as csv adds a blank line as well
+            #file.write(f"\n{name},{nick_name}")
+            writer = csv.DictWriter(file, fieldnames=["name", "nick_name"])
+            writer.writerow({"name": name, "nick_name": nick_name})
+            print("Name entered succefully, going back to Main Menu...")
         break
     else :
         YN_2 = int(input("Incorrect entry... 1.Try again  2.Main Menu -->"))
